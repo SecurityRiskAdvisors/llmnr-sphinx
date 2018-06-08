@@ -1,0 +1,15 @@
+[Unit]
+Description=Ask questions of your network to find a rogue LLMNR server.
+Documentation=https://github.com/SecurityRiskAdvisors/llmnr-sphinx
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/llmnr_sphinx/llmnr_sphinx.py -c /etc/llmnr_sphinx/config.ini
+Restart=always
+TimeoutSec=60
+KillMode=control-group
+
+[Install]
+WantedBy=network-online.target

@@ -1,0 +1,4 @@
+pytest_mock==1.10.0
+pytest==3.5.1
+mock==2.0.0
+scapy==2.4.0
