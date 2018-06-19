@@ -37,6 +37,10 @@ class TestParseConfigInterfaces():
         assert llmnr_sphinx.parse_config_interfaces('') == None
         pass
     
+    def test_none_as_option(self):
+        assert llmnr_sphinx.parse_config_interfaces('None') == None
+        pass
+
     def test_working_interface(self,mocker):
         interface_name = 'eth0'
         m_socket = mocker.patch.object(conf,'L3socket')

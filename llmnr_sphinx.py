@@ -84,7 +84,9 @@ class SnifferThread(threading.Thread):
 def parse_config_interfaces(interface_name):
 
     # Check to make sure the interface exists and can be used
-    if interface_name != "":
+    if (interface_name == "" or interface_name == "None"):
+        return None
+    else:
         try:
             conf.L3socket(iface=interface_name)
             return_value = interface_name
@@ -94,9 +96,6 @@ def parse_config_interfaces(interface_name):
             raise ValueError(
                 "Interface: %s does not exist" % (interface_name)
             ) from None
-        pass
-    else:
-        return None
         pass
     pass
 
