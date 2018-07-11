@@ -3,6 +3,8 @@
 import pytest
 import mock
 from pytest_mock import mocker
+from hypothesis import given, reproduce_failure
+import hypothesis.strategies as st
 
 
 
@@ -121,6 +123,16 @@ class TestParseParameters():
             pass
         pass
 
+    @given(x=st.text(alphabet=st.characters(blacklist_characters='1234567890')))
+    def test_hyp_delay(self, mocker, x):
+        mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
+        config_vals_local = self.config_values.copy()
+        config_vals_local['sending_delay'] = "%s" % (x)
+        with pytest.raises(ValueError):
+            llmnr_sphinx.parse_parameters('\n'.join(self.config_contents).format(**config_vals_local))
+            pass
+        pass
+
     def test_non_int_timeout(self, mocker):
         mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
         config_vals_local = self.config_values.copy()
@@ -129,6 +141,17 @@ class TestParseParameters():
             llmnr_sphinx.parse_parameters('\n'.join(self.config_contents).format(**config_vals_local))
             pass
         pass
+
+    @given(x=st.text(alphabet=st.characters(blacklist_characters='1234567890')))
+    def test_hyp_timeout(self, mocker, x):
+        mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
+        config_vals_local = self.config_values.copy()
+        config_vals_local['timeout'] = "%s" % (x)
+        with pytest.raises(ValueError):
+            llmnr_sphinx.parse_parameters('\n'.join(self.config_contents).format(**config_vals_local))
+            pass
+        pass
+
 
     def test_timeout_larger_delay(self, mocker):
         mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
@@ -159,6 +182,17 @@ class TestParseParameters():
             pass
         pass
 
+
+    @given(x=st.text())
+    def test_hyp_output(self, mocker, x):
+        mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
+        config_vals_local = self.config_values.copy()
+        config_vals_local['output'] = 'not_syslog'
+        with pytest.raises(ValueError):
+            llmnr_sphinx.parse_parameters('\n'.join(self.config_contents).format(**config_vals_local))
+            pass
+        pass
+
     def test_empty_round(self, mocker):
         mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
         config_vals_local = self.config_values.copy()
@@ -178,6 +212,25 @@ class TestParseParameters():
             llmnr_sphinx.parse_parameters('\n'.join(config_contents_local).format(**config_vals_local))
             pass
         pass
+
+    @given(x=st.text())
+    def test_hyp_hostname_value(self, mocker, x):
+        mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
+        config_vals_local = self.config_values.copy()
+        config_contents_local = self.config_contents.copy()
+        config_vals_local['dc2'] = x
+        with pytest.raises(ValueError):
+            llmnr_sphinx.parse_parameters('\n'.join(config_contents_local).format(**config_vals_local))
+            pass
+        pass
+
+    @given(x=st.text())
+    def test_hyp_hostname_key(self, mocker, x):
+        mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
+        config_vals_local = self.config_values.copy()
+        config_contents_local = self.config_contents.copy()
+        config_vals_local[x] = None
+        assert type(llmnr_sphinx.parse_parameters('\n'.join(config_contents_local).format(**config_vals_local))) == type(dict())
 
     def test_missing_section(self, mocker):
         mocker.patch('llmnr_sphinx.parse_config_interfaces', return_value = self.config_values['interface'])
