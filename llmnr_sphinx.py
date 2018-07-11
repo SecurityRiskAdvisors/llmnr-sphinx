@@ -123,9 +123,12 @@ def read_file(config_file, max_size=1 * 2 ** 20):
 
 def parse_parameters(config_file_contents):
 
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(interpolation=None)
 
-    config.read_string(config_file_contents)
+    try:
+        config.read_string(config_file_contents)
+    except configparser.Error:
+        raise ValueError("Malformed config file -- could not parse config file")
 
     core_config = {}
     try:
