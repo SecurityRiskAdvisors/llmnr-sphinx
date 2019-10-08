@@ -1,5 +1,5 @@
 pytest==3.5.1
 pytest_mock==1.10.0
-scapy==2.4.0
+scapy==2.4.1
 mock==2.0.0
 hypothesis==3.57.0
